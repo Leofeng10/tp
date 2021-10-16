@@ -19,7 +19,7 @@ public class TuitionCard extends UiPart<Region> {
     private static final Logger logger = LogsCenter.getLogger(TuitionCard.class);
 
     private static final String CAPACITY_LABEL = "Capacity: ";
-    private static final String REMARK_LABEL = "Notes: ";
+    private static final String REMARK_LABEL = "Remark: ";
 
     /**
      * Note: Certain keywords such as "location" and "resources" are reserved keywords in JavaFX.
