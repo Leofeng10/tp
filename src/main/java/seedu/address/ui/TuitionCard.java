@@ -19,7 +19,6 @@ public class TuitionCard extends UiPart<Region> {
     private static final Logger logger = LogsCenter.getLogger(TuitionCard.class);
 
     private static final String CAPACITY_LABEL = "Capacity: ";
-    private static final String REMARK_LABEL = "Remark: ";
 
     /**
      * Note: Certain keywords such as "location" and "resources" are reserved keywords in JavaFX.
@@ -41,8 +40,6 @@ public class TuitionCard extends UiPart<Region> {
     private Label timeSlot;
     @FXML
     private Label name;
-    @FXML
-    private Label remark;
 
     /**
      * Creates a {@code TuitionCode} with the given {@code TuitionClass} and index to display.
@@ -56,7 +53,6 @@ public class TuitionCard extends UiPart<Region> {
         name.setText(tuitionClass.getName().getName());
         capacity.setText(CAPACITY_LABEL + tuitionClass.getStudentCount() + "/" + tuitionClass.getLimit());
         timeSlot.setText(tuitionClass.getTimeslot().getTime());
-        remark.setText(REMARK_LABEL + tuitionClass.getRemark().value);
     }
 
     @Override

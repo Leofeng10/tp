@@ -3,10 +3,10 @@ package seedu.address.logic.commands;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
-import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
-import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
-import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD_PERSON;
-import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
+import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST;
+import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND;
+import static seedu.address.testutil.TypicalIndexes.INDEX_THIRD;
+import static seedu.address.testutil.TypicalPersons.getAddressBookWithTypicalPersons;
 
 import java.util.List;
 
@@ -20,18 +20,18 @@ import seedu.address.model.tuition.TuitionClass;
 
 public class DeleteClassCommandTest {
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model = new ModelManager(getAddressBookWithTypicalPersons(), new UserPrefs());
 
     @Test
     public void equals() {
-        DeleteClassCommand firstCommand = new DeleteClassCommand(List.of(INDEX_FIRST_PERSON, INDEX_SECOND_PERSON));
-        DeleteClassCommand secondCommand = new DeleteClassCommand(List.of(INDEX_SECOND_PERSON, INDEX_THIRD_PERSON));
+        DeleteClassCommand firstCommand = new DeleteClassCommand(List.of(INDEX_FIRST, INDEX_SECOND));
+        DeleteClassCommand secondCommand = new DeleteClassCommand(List.of(INDEX_SECOND, INDEX_THIRD));
 
         // same object -> returns true
         assertTrue(firstCommand.equals(firstCommand));
 
         // same values -> returns true
-        DeleteCommand firstCommandCopy = new DeleteCommand(List.of(INDEX_FIRST_PERSON));
+        DeleteCommand firstCommandCopy = new DeleteCommand(List.of(INDEX_FIRST));
         assertFalse(firstCommand.equals(firstCommandCopy));
 
         // different types -> returns false
@@ -46,9 +46,9 @@ public class DeleteClassCommandTest {
 
     @Test
     public void execute_validIndexUnfilteredList_success() {
-        DeleteClassCommand deleteCommand = new DeleteClassCommand(List.of(INDEX_FIRST_PERSON));
+        DeleteClassCommand deleteCommand = new DeleteClassCommand(List.of(INDEX_FIRST));
 
-        TuitionClass classToDelete = model.getFilteredTuitionList().get(INDEX_FIRST_PERSON.getZeroBased());
+        TuitionClass classToDelete = model.getFilteredTuitionList().get(INDEX_FIRST.getZeroBased());
 
         String expectedMessage = String.format(DeleteClassCommand.MESSAGE_DELETE_CLASSES_SUCCESS,
                 List.of(classToDelete.getName() + "|" + classToDelete.getTimeslot()));

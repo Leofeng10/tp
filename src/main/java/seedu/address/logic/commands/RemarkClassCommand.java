@@ -4,21 +4,32 @@ import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_REMARK;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_TUITIONS;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Logger;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
+import javafx.scene.image.Image;
+import javafx.stage.Stage;
+import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Remark;
 import seedu.address.model.tuition.TuitionClass;
+import seedu.address.ui.RemarkEditor;
+import seedu.address.ui.UiManager;
 
 public class RemarkClassCommand extends Command {
 
     public static final String COMMAND_WORD = "remarkclass";
-    public static final String MESSAGE_ADD_REMARK_SUCCESS = "Added remark to Tuition Class: %1$s";
+    public static final String MESSAGE_UPDATE_REMARK_SUCCESS = "Remark updated for Tuition Class: %1$s";
     public static final String MESSAGE_DELETE_REMARK_SUCCESS = "Removed remark from Tuition Class: %1$s";
-
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the remark of the tuition class identified "
             + "by the index number used in the last tuition classes listing. "
@@ -28,19 +39,19 @@ public class RemarkClassCommand extends Command {
             + "Example: " + COMMAND_WORD + " 1 "
             + PREFIX_REMARK + "physics homework: read chapter 3 pg 49-53.";
 
+    private static final Logger logger = LogsCenter.getLogger(RemarkClassCommand.class);
+
     private final Index index;
-    private final Remark remark;
 
     /**
      * @param index of the tuition class in the filtered tuition class list to edit the remark
-     * @param remark of the tuition class to be updated to
      */
-    public RemarkClassCommand(Index index, Remark remark) {
-        requireAllNonNull(index, remark);
+    public RemarkClassCommand(Index index) {
+        requireAllNonNull(index);
 
         this.index = index;
-        this.remark = remark;
     }
+
     @Override
     public CommandResult execute(Model model) throws CommandException {
         List<TuitionClass> lastShownList = model.getFilteredTuitionList();
@@ -50,8 +61,15 @@ public class RemarkClassCommand extends Command {
         }
 
         TuitionClass classToEdit = lastShownList.get(index.getZeroBased());
+
+        String name = String.valueOf(classToEdit.getName());
+        String remarkToEdit = String.valueOf(classToEdit.getRemark());
+        Remark newRemark = UiManager.showRemarkEditor(name, remarkToEdit);
+
         TuitionClass editedClass = new TuitionClass(classToEdit.getName(), classToEdit.getLimit(),
-                classToEdit.getTimeslot(), classToEdit.getStudentList(), remark);
+                classToEdit.getTimeslot(), classToEdit.getStudentList(), newRemark);
+
+        logger.info("Remark Editor closed.");
 
         model.setTuition(classToEdit, editedClass);
         model.updateFilteredTuitionList(PREDICATE_SHOW_ALL_TUITIONS);
@@ -60,7 +78,8 @@ public class RemarkClassCommand extends Command {
     }
 
     private String generateSuccessMessage(TuitionClass classToEdit) {
-        String message = !remark.value.isEmpty() ? MESSAGE_ADD_REMARK_SUCCESS : MESSAGE_DELETE_REMARK_SUCCESS;
+        String remark = String.valueOf(classToEdit.getRemark());
+        String message = !remark.isEmpty() ? MESSAGE_UPDATE_REMARK_SUCCESS : MESSAGE_DELETE_REMARK_SUCCESS;
         return String.format(message, classToEdit);
     }
 
@@ -79,7 +98,6 @@ public class RemarkClassCommand extends Command {
 
         // state check
         RemarkClassCommand e = (RemarkClassCommand) other;
-        return index.equals(e.index)
-                && remark.equals(e.remark);
+        return index.equals(e.index);
     }
 }

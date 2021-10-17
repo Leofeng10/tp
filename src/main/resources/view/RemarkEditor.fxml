@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ButtonType?>
+<?import javafx.scene.control.DialogPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<DialogPane prefHeight="202.0" prefWidth="510.0" style="-fx-background-color: #cbcfd1;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seedu.address.ui.RemarkEditor">
+   <content>
+      <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="180.0" prefWidth="510.0">
+         <children>
+            <Label layoutX="16.0" layoutY="5.0" prefHeight="31.0" text="Editing remark for:">
+               <font>
+                  <Font name="System Italic" size="12.0" />
+               </font></Label>
+            <TextArea fx:id="textArea" layoutX="16.0" layoutY="36.0" prefHeight="147.0" prefWidth="478.0" promptText="Edit remarks here..." />
+            <Label fx:id="name" layoutX="120.0" layoutY="10.0" text="\$name" textAlignment="CENTER">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Label>
+         </children>
+      </Pane>
+   </content>
+   <buttonTypes>
+      <ButtonType fx:constant="OK" />
+      <ButtonType fx:constant="CANCEL" />
+   </buttonTypes>
+</DialogPane>

@@ -2,13 +2,11 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_REMARK;
 
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.logic.commands.RemarkClassCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.Remark;
 
 public class RemarkClassCommandParser implements Parser<RemarkClassCommand> {
     /**
@@ -18,7 +16,7 @@ public class RemarkClassCommandParser implements Parser<RemarkClassCommand> {
      */
     public RemarkClassCommand parse(String args) throws ParseException {
         requireNonNull(args);
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_REMARK);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args);
 
         Index index;
         try {
@@ -28,8 +26,6 @@ public class RemarkClassCommandParser implements Parser<RemarkClassCommand> {
                     RemarkClassCommand.MESSAGE_USAGE), ive);
         }
 
-        String remark = argMultimap.getValue(PREFIX_REMARK).orElse("");
-
-        return new RemarkClassCommand(index, new Remark(remark));
+        return new RemarkClassCommand(index);
     }
 }

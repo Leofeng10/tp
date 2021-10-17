@@ -1,16 +1,24 @@
 package seedu.address.ui;
 
+import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import seedu.address.MainApp;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.Logic;
+import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.model.person.Remark;
 
 /**
  * The manager of the UI component.
@@ -18,6 +26,7 @@ import seedu.address.logic.Logic;
 public class UiManager implements Ui {
 
     public static final String ALERT_DIALOG_PANE_FIELD_ID = "alertDialogPane";
+    public static final String REMARK_EDITOR_ERROR_MESSAGE = "Something went wrong with the remark editor!";
 
     private static final Logger logger = LogsCenter.getLogger(UiManager.class);
     private static final String ICON_APPLICATION = "/images/address_book_32.png";
@@ -84,6 +93,41 @@ public class UiManager implements Ui {
         showAlertDialogAndWait(Alert.AlertType.ERROR, title, e.getMessage(), e.toString());
         Platform.exit();
         System.exit(1);
+    }
+
+    /**
+     * Displays a dialog box for the user to edit remarks.
+     * @param name The name of the student or tuition class being modified.
+     * @param remarkToEdit The current remark of the student or tuition class.
+     * @return Returns the updated remark.
+     * @throws CommandException If unable to load the fxml file for the remark editor.
+     */
+    public static Remark showRemarkEditor(String name, String remarkToEdit) throws CommandException {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader();
+            fxmlLoader.setLocation(UiManager.class.getResource("/view/RemarkEditor.fxml"));
+            DialogPane remarkEditor = fxmlLoader.load();
+
+            logger.fine("Showing the remark editor...");
+
+            RemarkEditor remarkController = fxmlLoader.getController();
+            remarkController.setRemark(name, remarkToEdit);
+
+            Dialog<ButtonType> dialog = new Dialog<>();
+            dialog.setDialogPane(remarkEditor);
+            dialog.setTitle("Remark Editor");
+            Stage stage = (Stage) remarkEditor.getScene().getWindow();
+            stage.getIcons().add(new Image(String.valueOf(UiManager.class.getResource("/images/edit_icon.png"))));
+
+            Optional<ButtonType> clickedButton = dialog.showAndWait();
+            if (clickedButton.get() == ButtonType.OK) {
+                return remarkController.getNewRemark();
+            }
+        } catch (IOException e) {
+            logger.severe(StringUtil.getDetails(e));
+            throw new CommandException(REMARK_EDITOR_ERROR_MESSAGE, e);
+        }
+        return new Remark(remarkToEdit);
     }
 
 }
