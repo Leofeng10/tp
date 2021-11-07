@@ -1,18 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
-<VBox fx:id="studentPagePane" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="studentPagePane" style="-fx-background-color: transparent;" stylesheets="@DarkTheme.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="name" styleClass="cell_big_label" text="Name">
-      </Label>
-      <FlowPane fx:id="tags" />
-      <Label fx:id="phone" styleClass="cell_small_label" text="Phone" />
-      <Label fx:id="address" styleClass="cell_small_label" text="Address" />
-      <Label fx:id="email" styleClass="cell_small_label" text="Email" />
-      <Label fx:id="remark" styleClass="cell_small_label" text="Remark" />
+      <Label fx:id="name" styleClass="cell_big_label" text="Name" wrapText="true" />
+      <FlowPane fx:id="tags">
+         <VBox.margin>
+            <Insets bottom="5.0" top="5.0" />
+         </VBox.margin>
+      </FlowPane>
+      <GridPane centerShape="false" gridLinesVisible="true" scaleShape="false" style="-fx-background-color: #303030;" VBox.vgrow="NEVER">
+         <columnConstraints>
+            <ColumnConstraints fillWidth="false" hgrow="NEVER" minWidth="150.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="200.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints fillHeight="false" vgrow="ALWAYS" />
+            <RowConstraints fillHeight="false" vgrow="ALWAYS" />
+            <RowConstraints fillHeight="false" vgrow="ALWAYS" />
+            <RowConstraints fillHeight="false" vgrow="ALWAYS" />
+         </rowConstraints>
+         <children>
+            <Label alignment="TOP_LEFT" centerShape="false" style="-fx-font-weight: bold;" styleClass="cell_small_label" text="Phone Number:" wrapText="true" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label alignment="TOP_LEFT" centerShape="false" style="-fx-font-weight: bold;" styleClass="cell_small_label" text="Address:" GridPane.rowIndex="1" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label alignment="TOP_LEFT" centerShape="false" style="-fx-font-weight: bold;" styleClass="cell_small_label" text="Email:" GridPane.rowIndex="2" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label alignment="TOP_LEFT" centerShape="false" style="-fx-font-weight: bold;" styleClass="cell_small_label" text="Remarks:" GridPane.rowIndex="3" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="remark" alignment="TOP_LEFT" centerShape="false" styleClass="cell_small_label" text="remark" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+               <GridPane.margin>
+                  <Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
+               </GridPane.margin>
+            </Label>
+            <Label fx:id="phone" alignment="TOP_LEFT" centerShape="false" styleClass="cell_small_label" text="phone" wrapText="true" GridPane.columnIndex="1" />
+            <Label fx:id="address" alignment="TOP_LEFT" centerShape="false" styleClass="cell_small_label" text="address" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label fx:id="email" alignment="TOP_LEFT" centerShape="false" styleClass="cell_small_label" text="email" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </GridPane>
    </children>
 </VBox>

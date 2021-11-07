@@ -3,6 +3,7 @@ package seedu.address.ui;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -18,6 +19,8 @@ public class CommandBox extends UiPart<Region> {
 
     private final CommandExecutor commandExecutor;
 
+    private InputHistory inputHistory;
+
     @FXML
     private TextField commandTextField;
 
@@ -27,6 +30,7 @@ public class CommandBox extends UiPart<Region> {
     public CommandBox(CommandExecutor commandExecutor) {
         super(FXML);
         this.commandExecutor = commandExecutor;
+        this.inputHistory = new InputHistory();
         // calls #setStyleToDefault() whenever there is a change to the text of the command box.
         commandTextField.textProperty().addListener((unused1, unused2, unused3) -> setStyleToDefault());
     }
@@ -41,11 +45,40 @@ public class CommandBox extends UiPart<Region> {
             return;
         }
 
+        inputHistory.add(commandText);
+
         try {
             commandExecutor.execute(commandText);
             commandTextField.setText("");
         } catch (CommandException | ParseException e) {
+            commandTextField.setText(inputHistory.getPreviousInput());
+            commandTextField.positionCaret(commandTextField.getText().length());
             setStyleToIndicateCommandFailure();
+        }
+    }
+
+    /**
+     * Handles the Up button pressed event.
+     */
+    @FXML
+    private void handleButtonPressed(KeyEvent key) {
+        switch(key.getCode()) {
+        case UP:
+            String previousInput = inputHistory.getPreviousInput();
+            commandTextField.setText(previousInput);
+            commandTextField.positionCaret(commandTextField.getText().length());
+            break;
+        case DOWN:
+            String nextInput = inputHistory.getNextInput();
+            commandTextField.setText(nextInput);
+            commandTextField.positionCaret(commandTextField.getText().length());
+            break;
+        case LEFT:
+        case RIGHT:
+            commandTextField.positionCaret(commandTextField.getCaretPosition());
+            break;
+        default:
+            break;
         }
     }
 

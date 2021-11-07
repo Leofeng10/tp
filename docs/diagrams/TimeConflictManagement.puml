@@ -1,0 +1,80 @@
+@startuml
+!include style.puml
+
+title AddClassCommand
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR_T3
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR_T2
+participant ":AddClassCommandParser" as AddClassCommandParser LOGIC_COLOR_T3
+participant "ac:AddClassCommand" as AddClassCommand LOGIC_COLOR_T2
+participant ":CommandResult" as CommandResult LOGIC_COLOR_T3
+participant ":Timeslot" as Timeslot LOGIC_COLOR_T4
+end box
+
+box Model MODEL_COLOR_T1
+participant ":Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute\n("ac n/Math l/8 \nts/Mon 11:00-14:00")
+activate LogicManager LOGIC_COLOR_T3
+
+LogicManager -[LOGIC_COLOR_T3]> AddressBookParser : parseCommand\n("ac n/Math l/8 \nts/Mon 11:00-14:00")
+activate AddressBookParser LOGIC_COLOR_T2
+
+create AddClassCommandParser
+AddressBookParser -[LOGIC_COLOR_T2]> AddClassCommandParser
+activate AddClassCommandParser LOGIC_COLOR_T3
+
+AddClassCommandParser -[LOGIC_COLOR_T3]-> AddressBookParser
+deactivate AddClassCommandParser
+
+AddressBookParser -[LOGIC_COLOR_T2]> AddClassCommandParser : parse\n("n/Math l/8 \nts/Mon 11:00-14:00")
+activate AddClassCommandParser LOGIC_COLOR_T3
+
+create AddClassCommand
+AddClassCommandParser -[LOGIC_COLOR_T3]> AddClassCommand
+activate AddClassCommand LOGIC_COLOR_T2
+
+AddClassCommand -[LOGIC_COLOR_T2]-> AddClassCommandParser : ac
+deactivate AddClassCommand
+
+AddClassCommandParser -[LOGIC_COLOR_T3]-> AddressBookParser : ac
+deactivate AddClassCommandParser
+AddClassCommandParser -[hidden]-> AddressBookParser
+destroy AddClassCommandParser
+
+AddressBookParser -[LOGIC_COLOR_T2]-> LogicManager : ac
+deactivate AddressBookParser
+
+LogicManager -[LOGIC_COLOR_T3]> AddClassCommand : execute()
+activate AddClassCommand LOGIC_COLOR_T2
+
+AddClassCommand -[LOGIC_COLOR_T2]> Model : getFilteredTuitionList()
+activate Model MODEL_COLOR
+
+Model --> AddClassCommand : Tuition list
+deactivate Model
+
+create Timeslot
+AddClassCommand -[LOGIC_COLOR_T2]> Timeslot
+activate Timeslot LOGIC_COLOR_T4
+
+Timeslot --> Timeslot: checkTimetable\nConflicts(classList)
+
+Timeslot -[LOGIC_COLOR_T3]-> AddClassCommand
+deactivate Timeslot
+
+create CommandResult
+AddClassCommand -[LOGIC_COLOR_T2]> CommandResult
+activate CommandResult LOGIC_COLOR_T3
+
+CommandResult -[LOGIC_COLOR_T3]-> AddClassCommand
+deactivate CommandResult
+
+AddClassCommand -[LOGIC_COLOR_T2]-> LogicManager : result
+deactivate AddClassCommand
+
+[<-[LOGIC_COLOR_T2]-LogicManager
+deactivate LogicManager
+@enduml

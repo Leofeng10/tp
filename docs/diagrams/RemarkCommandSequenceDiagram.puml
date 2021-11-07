@@ -1,0 +1,55 @@
+@startuml
+!include style.puml
+
+title RemarkCommand
+
+Actor User as user USER_COLOR
+box Ui UI_COLOR_T1
+participant ":RemarkEditor" as editor UI_COLOR_T2
+participant ":UI" as ui UI_COLOR
+end box
+
+box Logic LOGIC_COLOR_T1
+participant ":Logic" as logic LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+Participant ":Model" as model MODEL_COLOR
+end box
+
+user -[USER_COLOR]> ui : "remark 1"
+activate ui UI_COLOR
+
+ui -[UI_COLOR_T3]> logic : execute()
+activate logic LOGIC_COLOR
+
+logic -[LOGIC_COLOR]> model : get student's \n name and remark
+activate model MODEL_COLOR
+
+model -[MODEL_COLOR]-> logic
+deactivate model
+
+logic -[LOGIC_COLOR]> ui : showRemarkEditor()
+activate ui UI_COLOR_T2
+
+ui -[UI_COLOR_T2]> editor : load Remark Editor
+activate editor UI_COLOR_T2
+
+user -[USER_COLOR]>editor : User edits remark \n and clicks "Ok"
+editor -[UI_COLOR_T2]-> ui : edited remark
+deactivate editor
+
+ui -[UI_COLOR_T3]-> logic
+deactivate ui
+
+logic -[LOGIC_COLOR]> model : update student
+activate model MODEL_COLOR
+model -[MODEL_COLOR]-> logic
+deactivate model
+
+logic --[LOGIC_COLOR]> ui
+deactivate logic
+
+ui--[UI_COLOR]> user
+deactivate ui
+@enduml

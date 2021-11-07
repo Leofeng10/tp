@@ -18,7 +18,7 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.Logic;
 import seedu.address.logic.commands.exceptions.CommandException;
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Remark;
 
 /**
  * The manager of the UI component.
@@ -121,12 +121,15 @@ public class UiManager implements Ui {
 
             Optional<ButtonType> clickedButton = dialog.showAndWait();
             if (clickedButton.get() == ButtonType.OK) {
+                logger.info("Ok button clicked. Remark Editor closing now.");
                 return remarkController.getNewRemark();
             }
         } catch (IOException e) {
             logger.severe(StringUtil.getDetails(e));
             throw new CommandException(REMARK_EDITOR_ERROR_MESSAGE, e);
         }
+
+        logger.info("Cancel remark updates. Remark Editor closing now.");
         return new Remark(remarkToEdit);
     }
 

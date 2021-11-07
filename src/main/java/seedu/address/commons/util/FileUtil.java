@@ -20,8 +20,8 @@ public class FileUtil {
     /**
      * Returns boolean true if file exists.
      *
-     * @param file
-     * @return
+     * @param file The path of the file.
+     * @return True if the file exists at the path, false otherwise.
      */
     public static boolean isFileExists(Path file) {
         return Files.exists(file) && Files.isRegularFile(file);

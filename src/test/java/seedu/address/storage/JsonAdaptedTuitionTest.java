@@ -1,7 +1,7 @@
 package seedu.address.storage;
 
 import static seedu.address.testutil.Assert.assertThrows;
-import static seedu.address.testutil.TypicalPersons.BENSON;
+import static seedu.address.testutil.TypicalStudents.BENSON;
 
 import java.util.ArrayList;
 

@@ -1,0 +1,94 @@
+@startuml
+!include style.puml
+
+title AddToClassCommand
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR_T3
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR_T2
+participant ":AddToClassCommandParser" as AddToClassCommandParser LOGIC_COLOR_T3
+participant "atc:AddToClassCommand" as AddToClassCommand LOGIC_COLOR_T2
+participant ":CommandResult" as CommandResult LOGIC_COLOR_T3
+end box
+
+box Model MODEL_COLOR_T1
+participant ":Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute\n("atc si/2 4 tc/1")
+activate LogicManager LOGIC_COLOR_T3
+
+LogicManager -[LOGIC_COLOR_T3]> AddressBookParser : parseCommand\n("atc si/2 4 tc/1")
+activate AddressBookParser LOGIC_COLOR_T2
+
+create AddToClassCommandParser
+AddressBookParser -[LOGIC_COLOR_T2]> AddToClassCommandParser
+activate AddToClassCommandParser LOGIC_COLOR_T3
+
+AddToClassCommandParser -[LOGIC_COLOR_T3]-> AddressBookParser
+deactivate AddToClassCommandParser
+
+AddressBookParser -[LOGIC_COLOR_T2]> AddToClassCommandParser : parse("si/2 4 tc/1")
+activate AddToClassCommandParser LOGIC_COLOR_T3
+
+create AddToClassCommand
+AddToClassCommandParser -[LOGIC_COLOR_T3]> AddToClassCommand
+activate AddToClassCommand LOGIC_COLOR_T2
+
+AddToClassCommand -[LOGIC_COLOR_T2]-> AddToClassCommandParser : atc
+deactivate AddToClassCommand
+
+AddToClassCommandParser -[LOGIC_COLOR_T3]-> AddressBookParser : atc
+deactivate AddToClassCommandParser
+AddToClassCommandParser -[hidden]-> AddressBookParser
+destroy AddToClassCommandParser
+
+AddressBookParser -[LOGIC_COLOR_T2]-> LogicManager : atc
+deactivate AddressBookParser
+
+LogicManager -[LOGIC_COLOR_T3]> AddToClassCommand : execute()
+activate AddToClassCommand LOGIC_COLOR_T2
+
+AddToClassCommand -[LOGIC_COLOR_T2]> Model : getTuitionClass(1)
+activate Model MODEL_COLOR
+
+Model --> AddToClassCommand : tuition class
+deactivate Model
+
+loop for each student index in input
+AddToClassCommand -[LOGIC_COLOR_T2]> Model : getStudent(index)
+activate Model MODEL_COLOR
+Model --> AddToClassCommand : student
+deactivate Model
+end
+
+AddToClassCommand -[LOGIC_COLOR_T2]> AddToClassCommand : categorizeStudents()
+activate AddToClassCommand LOGIC_COLOR_T3
+AddToClassCommand -[LOGIC_COLOR_T4]-> AddToClassCommand
+deactivate AddToClassCommand
+
+loop for valid students
+AddToClassCommand -[LOGIC_COLOR_T2]> Model : addClass(student)
+activate Model MODEL_COLOR
+Model --> AddToClassCommand
+deactivate Model
+end
+
+AddToClassCommand -[LOGIC_COLOR_T2]> Model : updateModel()
+activate Model MODEL_COLOR
+Model --> AddToClassCommand
+deactivate Model
+
+create CommandResult
+AddToClassCommand -[LOGIC_COLOR_T2]> CommandResult
+activate CommandResult LOGIC_COLOR_T3
+
+CommandResult -[LOGIC_COLOR_T3]-> AddToClassCommand
+deactivate CommandResult
+
+AddToClassCommand -[LOGIC_COLOR_T2]-> LogicManager : result
+deactivate AddToClassCommand
+
+[<-[LOGIC_COLOR_T2]-LogicManager
+deactivate LogicManager
+@enduml

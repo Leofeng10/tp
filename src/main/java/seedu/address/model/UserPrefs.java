@@ -17,7 +17,7 @@ public class UserPrefs implements ReadOnlyUserPrefs {
 
     private static final Logger LOGGER = LogsCenter.getLogger(UserPrefs.class);
     private GuiSettings guiSettings = new GuiSettings();
-    private Path addressBookFilePath = Paths.get("data" , "addressbook.json");
+    private Path addressBookFilePath = Paths.get("data" , "tutassistor.json");
 
     /**
      * Creates a {@code UserPrefs} with default values.

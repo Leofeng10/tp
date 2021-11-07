@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox id="tuitionPane" fx:id="tuitionPane" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+<HBox id="tuitionPane" fx:id="tuitionPane" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1">
     <GridPane HBox.hgrow="ALWAYS">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10" prefWidth="150" />
@@ -26,7 +26,7 @@
                         <Region fx:constant="USE_PREF_SIZE" />
                     </minWidth>
                 </Label>
-                <Label fx:id="name" style="-fx-font-weight: bold;" styleClass="cell_big_label" text="\\$name">
+                <Label fx:id="name" style="-fx-font-weight: bold;" styleClass="cell_big_label" text="\\$name" wrapText="true">
                <font>
                   <Font size="13.0" />
                </font></Label>

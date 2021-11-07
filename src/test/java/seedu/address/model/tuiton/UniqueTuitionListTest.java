@@ -21,11 +21,11 @@ import seedu.address.model.tuition.exceptions.TuitionNotFoundException;
 public class UniqueTuitionListTest {
     private final UniqueTuitionList uniqueTuitionList = new UniqueTuitionList();
     private final TuitionClass tuitionClass = new TuitionClass(new ClassName("CS2103"),
-            new ClassLimit(10), new Timeslot("Mon 14:00-16:00"), null, null);
+            new ClassLimit(10), Timeslot.parseString("Mon 14:00-16:00"), null, null);
     private final TuitionClass tuitionClass1 = new TuitionClass(new ClassName("CS2103"),
-            new ClassLimit(10), new Timeslot("Tue 14:00-16:00"), null, null);
+            new ClassLimit(10), Timeslot.parseString("Tue 14:00-16:00"), null, null);
     private final TuitionClass tuitionClass2 = new TuitionClass(new ClassName("CS2105"),
-            new ClassLimit(10), new Timeslot("Mon 15:00-16:00"), null, null);
+            new ClassLimit(10), Timeslot.parseString("Mon 15:00-16:00"), null, null);
 
     @Test
     public void contains_nullTuition_throwsNullPointerException() {

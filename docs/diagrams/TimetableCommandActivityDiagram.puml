@@ -1,0 +1,20 @@
+@startuml
+
+title TimetableCommand
+
+start
+:User executes "timetable";
+
+if () then ([non-empty tuition class list])
+    :Get updated tuition class list;
+    :Determine size of timetable;
+    :Insert tuition class slots to
+    the timetable;
+    :Display timetable to user;
+else ([else])
+    :Alert user that no tuition
+    class has been found;
+
+endif
+stop
+@enduml

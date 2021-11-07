@@ -1,18 +1,22 @@
 package seedu.address.model.tuition;
-
-import static java.util.Objects.requireNonNull;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
-
+import java.util.List;
+import java.util.Locale;
 
 /**
- * Represents the time slot the tuition class takes
+ * Represents the time slot that the tuition class occupies in the Timetable.
  */
 public class Timeslot {
     public static final String TIME_FORMAT_INCORRECT = "The time format is not correct";
-    public final String time;
+
     //used to sorting tuition classes by comparing date
-    private HashMap<String, Integer> days = new HashMap<>() {{
+    private static HashMap<String, Integer> days = new HashMap<>() {{
             put("Mon", 1);
             put("Tue", 2);
             put("Wed", 3);
@@ -22,101 +26,68 @@ public class Timeslot {
             put("Sun", 7);
         }};
 
+    private Date day;
+    private LocalTime start;
+    private LocalTime end;
 
     /**
-     * Constructor for time slot.
+     * Constructor for timeslot.
      *
-     * @param time
+     * @param day Day in the week in EEE format
+     * @param start Start time of class in HH:mm format
+     * @param end End time of class in HH:mm format
      */
-    public Timeslot(String time) {
-        requireNonNull(time);
-        this.time = time;
+    public Timeslot(Date day, LocalTime start, LocalTime end) {
+        this.start = start;
+        this.end = end;
+        this.day = day;
     }
 
-
-    /**
-     * check whether the format of timeslot is correct
-     * @return
-     */
-    public boolean isFormatCorrect() {
-        String[] splitTime = this.time.split(" ");
-        String weekDay = splitTime[0];
-        String timeRange = splitTime[1];
-        if (weekDay.equals("Mon") || weekDay.equals("Tue") || weekDay.equals("Wed")
-                || weekDay.equals("Thu") || weekDay.equals("Fri")
-                || weekDay.equals("Sat") || weekDay.equals("Sun")) {
-
-            return isTimeFormatCorrect(timeRange);
-        }
-        return false;
+    public String getDayString() {
+        return (this.getTime().split(" "))[0];
     }
 
     /**
-     * Check the time format, should be hh:mm-hh:mm
-     * @param mytime
-     * @return
+     * Returns the start time of the class in LocalTime format.
+     *
+     * @return LocalTime representation of starting time of the class.
      */
-    public boolean isTimeFormatCorrect(String mytime) {
-
-        String[] timeRange = mytime.split("-");
-        if (timeRange.length != 2) {
-            return false;
-        }
-        String first = timeRange[0];
-        String second = timeRange[1];
-        System.out.println(first + "  " + second);
-        if (first.length() != 5 || second.length() != 5) {
-            return false;
-        }
-        if (first.charAt(2) != ':' || second.charAt(2) != ':') {
-            return false;
-        }
-        if (Integer.valueOf(first.substring(0, 2)) > Integer.valueOf(second.substring(0, 2))) {
-            return false;
-        } else if (Integer.valueOf(first.substring(0, 2)) == Integer.valueOf(second.substring(0, 2))) {
-            return Integer.valueOf(first.substring(3, 5)) < Integer.valueOf(second.substring(3, 5));
-        } else {
-            return true;
-        }
+    public LocalTime getStart() {
+        return this.start;
     }
-
-    @Override
-    public String toString() {
-        return time;
-    }
-
 
     /**
-     * compare two time slot to detect any conflict
-     * @param otherTime the time to compare
-     * @return true if conflict exist, false if no conflict
+     * Returns the end time of the class in LocalTime format.
+     *
+     * @return LocalTime representation of ending time of the class.
      */
-    public boolean compareTime(String otherTime) {
-        //exactly the same
-        if (time.equals(otherTime)) {
-            return true;
-        }
-        String[] time1 = time.split(" ");
-        String[] time2 = otherTime.split(" ");
+    public LocalTime getEnd() {
+        return this.end;
+    }
 
-        //day is not the same,return false
-        if (!time1[0].equals(time2[0])) {
+    /**
+     * Returns the day of the class in Date format.
+     *
+     * @return Date representation of the day of the class.
+     */
+    public Date getDay() {
+        return this.day;
+    }
+
+    /**
+     * Compare two time slots to detect any overlaps or conflicts.
+     *
+     * @return Boolean true if conflict exists and false otherwise.
+     */
+    public boolean checkClassConflict(Timeslot otherSlot) {
+        LocalTime otherStart = otherSlot.getStart();
+        LocalTime otherEnd = otherSlot.getEnd();
+        if (otherSlot.getDay().getDay() != day.getDay()) {
             return false;
         }
-
-        //day is the same, compare time
-        int time1Start = Integer.parseInt(time1[1].substring(0, 2));
-        int time1End = Integer.parseInt(time1[1].substring(6, 8));
-        int time2Start = Integer.parseInt(time2[1].substring(0, 2));
-        int time2End = Integer.parseInt(time2[1].substring(6, 8));
-        if (time1Start == time2Start || time1End == time2End) {
-            return true;
-        }
-        if (time1Start > time2Start) {
-            return time1Start < time2End;
-        } else {
-            return time1End > time2Start;
-        }
+        LocalTime max = otherStart.isAfter(start) ? otherStart : start;
+        LocalTime min = otherEnd.isBefore(end) ? otherEnd : end;
+        return min.isAfter(max);
     }
 
     @Override
@@ -125,47 +96,124 @@ public class Timeslot {
             return true;
         }
         if (other instanceof Timeslot) {
-            return compareTime(((Timeslot) other).getTime());
+            Timeslot otherSlot = ((Timeslot) other);
+            return day == otherSlot.getDay()
+                    && !(otherSlot.getEnd().isAfter(end) || otherSlot.getEnd().isBefore(end))
+                    && !(otherSlot.getStart().isAfter(start) || otherSlot.getStart().isBefore(start));
         }
         return false;
     }
 
     /**
-     * Compares two timeslot.
-     * @param otherTime the other timeslots to be compared to.
-     * @return 0 if equal, -1 if the othertime is later, and 1 if this time is later.
+     * Returns String representation of this Timeslot in a specified format.
+     *
+     * @return String that represents the timeslot.
      */
-    public int compareTimeOrder(String otherTime) {
-        //exactly the same
-        if (time.equals(otherTime)) {
-            return 0;
+    public String getTime() {
+        DateFormat dayFormat = new SimpleDateFormat("EEE");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+        return String.format("%s %s-%s", dayFormat.format(day), start.format(timeFormat), end.format(timeFormat));
+    }
+
+    /**
+     * Returns a string representation of the object. In general, the
+     * {@code toString} method returns a string that
+     * "textually represents" this object. The result should
+     * be a concise but informative representation that is easy for a
+     * person to read.
+     *
+     * @return a string representation of the object.
+     */
+    @Override
+    public String toString() {
+        return getTime();
+    }
+
+    /**
+     * Parses a time range in the form of string into LocalTime format.
+     * @return the starting time and end time in an array.
+     */
+    public LocalTime[] parseTime() {
+        String[] time = this.getTime().split(" ");
+        String start = time[1].substring(0, 5);
+        String end = time[1].substring(6, 11);
+        if (start.substring(0, 2).equals("24")) {
+            start = "00" + start.substring(2);
         }
-        String[] time1 = time.split(" ");
-        String[] time2 = otherTime.split(" ");
-        int compareDay = days.get(time1[0]).compareTo(days.get(time2[0]));
-        if (compareDay != 0) {
-            return compareDay;
+        if (end.substring(0, 2).equals("24")) {
+            end = "00" + end.substring(2);
         }
-        //day is the same, compare time
-        int time1Start = Integer.parseInt(time1[1].substring(0, 2));
-        int time1End = Integer.parseInt(time1[1].substring(6, 8));
-        int time2Start = Integer.parseInt(time2[1].substring(0, 2));
-        int time2End = Integer.parseInt(time2[1].substring(6, 8));
-        if (time1Start == time2Start) {
-            int compareTime = time1End == time2End ? 0
-                    : time1End > time2End
-                    ? 1
-                    : 0;
-            return compareTime;
+        LocalTime localStart = LocalTime.parse(start);
+        LocalTime localEnd = LocalTime.parse(end);
+        return new LocalTime[]{localStart, localEnd};
+    }
+
+    public static HashMap<String, Integer> getDays() {
+        return days;
+    }
+
+    /**
+     * Returns timeslot given timeslot as String in the correct format.
+     * @param slot
+     * @return
+     */
+    public static Timeslot parseString(String slot) {
+        String[] arr = slot.trim().split(" ", 2); //Splits day from time
+        String[] times = arr.length == 2 ? arr[1].split("-", 2) : null;
+
+        if (arr.length < 2 || times == null || times.length < 2) {
+            return null;
         }
-        if (time1Start > time2Start) {
-            return 1;
-        } else {
-            return -1;
+        DateFormat dayFormat = new SimpleDateFormat("EEE");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+        try {
+            Date day = dayFormat.parse(arr[0]);
+            LocalTime start = LocalTime.parse(times[0], timeFormat);
+            LocalTime end = LocalTime.parse(times[1], timeFormat);
+
+            if (!start.isBefore(end)) {
+                return null;
+            }
+            return new Timeslot(day, start, end);
+        } catch (DateTimeException | java.text.ParseException de) {
+            return null;
         }
     }
 
-    public String getTime() {
-        return time;
+    /**
+     * Returns true if any timeslot of existing classes clashes with this timeslot.
+     *
+     * @param classList The list of existing tuition classes.
+     * @return Boolean true if there is a conflict and false otherwise.
+     */
+    public boolean checkTimetableConflicts(List<TuitionClass> classList) {
+        for (TuitionClass tc: classList) {
+            if (this.checkClassConflict(tc.getTimeslot())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns a negative integer, zero, or a positive integer by comparing the two timeslots.
+     *
+     * @param timeslot The timeslot to be compared to.
+     * @return An integer indicating the relative size of two timeslots compared to each other.
+     */
+    public int compareTimeOrder(Timeslot timeslot) {
+        int otherDay = timeslot.getDay().getDay();
+        int compareDay = day.getDay() - otherDay;
+        if (compareDay != 0) {
+            return compareDay > 0 ? 1 : -1;
+        }
+
+        if (start.isBefore(timeslot.getStart())) {
+            return -1;
+        } else {
+            return 1;
+        }
     }
 }
+
+

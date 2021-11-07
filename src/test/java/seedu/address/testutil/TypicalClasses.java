@@ -20,6 +20,9 @@ public class TypicalClasses {
     public static final TuitionClass GEOGRAPHY = new TuitionClassBuilder().withName("Geography")
             .withClassLimit(8).withTimeslot("Fri 09:00-11:00").withRemark("Recommend textbooks")
             .withId(4).build();
+    public static final TuitionClass CHEMISTRY = new TuitionClassBuilder().withName("Chemistry")
+            .withClassLimit(1).withTimeslot("Sat 11:00-14:00").withRemark("Acid")
+            .withId(1).build();
 
 
     private TypicalClasses() {} // prevents instantiation
@@ -35,7 +38,19 @@ public class TypicalClasses {
         return ab;
     }
 
+    /**
+     * Adds typical classes to the addressbook.
+     * @param ab the addressbook to add tuition classes into.
+     * @return the addressbook after adding tuition classes.
+     */
+    public static AddressBook addTypicalClassesToAddressBook(AddressBook ab) {
+        for (TuitionClass tuitionClass : getTypicalClasses()) {
+            ab.addTuition(tuitionClass);
+        }
+        return ab;
+    }
+
     public static List<TuitionClass> getTypicalClasses() {
-        return new ArrayList<>(Arrays.asList(MATH, PHYSICS, ENGLISH, GEOGRAPHY));
+        return new ArrayList<>(Arrays.asList(MATH, PHYSICS, ENGLISH, GEOGRAPHY, CHEMISTRY));
     }
 }

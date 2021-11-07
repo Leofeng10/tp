@@ -5,10 +5,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import seedu.address.model.person.Classes;
-
 /**
- * Represents students who are in this tuition class
+ * Represents all students who are in a tuition class.
  */
 public class StudentList {
     private final ArrayList<String> students;
@@ -16,7 +14,7 @@ public class StudentList {
     /**
      * Constructor for student class.
      *
-     * @param students
+     * @param students The list of students.
      */
     public StudentList(List<String> students) {
         requireNonNull(students);
@@ -36,21 +34,22 @@ public class StudentList {
     @Override
     public boolean equals(Object other) {
         return other == this // short circuit if same object
-                || (other instanceof Classes // instanceof handles nulls
+                || (other instanceof StudentList // instanceof handles nulls
                 && equalClasses(((StudentList) other).students)); // state check
     }
 
     /**
+     * Returns true if both student lists are identical.
      *
-     * @param cmpStudents
-     * @return
+     * @param otherStudents The list of students to compare to.
+     * @return True if the student lists are equal and false otherwise.
      */
-    public boolean equalClasses(ArrayList<String> cmpStudents) {
-        if (cmpStudents.size() != this.students.size()) {
+    public boolean equalClasses(ArrayList<String> otherStudents) {
+        if (otherStudents.size() != this.students.size()) {
             return false;
         }
         for (int i = 0; i < students.size(); i++) {
-            if (!cmpStudents.get(i).equals(this.students.get(i))) {
+            if (!otherStudents.get(i).equals(this.students.get(i))) {
                 return false;
             }
         }
@@ -67,5 +66,18 @@ public class StudentList {
      */
     public boolean isEmpty() {
         return students.isEmpty();
+    }
+
+    /**
+     * Updates student name in this student list.
+     *
+     * @param oldName The original name of the student.
+     * @param newName The updated name of the student.
+     */
+    public void changeStudentName(String oldName, String newName) {
+        if (students.contains(oldName)) {
+            students.remove(oldName);
+            students.add(newName);
+        }
     }
 }

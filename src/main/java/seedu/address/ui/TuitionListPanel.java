@@ -13,7 +13,7 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.tuition.TuitionClass;
 
 /**
- * Panel containing the list of persons.
+ * Panel containing the list of tuition classes.
  */
 public class TuitionListPanel extends UiPart<Region> {
     private static final String FXML = "TuitionListPanel.fxml";

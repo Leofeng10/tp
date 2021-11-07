@@ -9,4 +9,7 @@ public class TypicalIndexes {
     public static final Index INDEX_FIRST = Index.fromOneBased(1);
     public static final Index INDEX_SECOND = Index.fromOneBased(2);
     public static final Index INDEX_THIRD = Index.fromOneBased(3);
+    public static final Index INDEX_TENTH = Index.fromOneBased(10);
+    public static final Index INDEX_FOURTH = Index.fromOneBased(4);
+    public static final Index INDEX_FIFTH = Index.fromOneBased(5);
 }

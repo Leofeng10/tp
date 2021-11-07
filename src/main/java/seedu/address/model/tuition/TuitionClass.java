@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import seedu.address.model.Nameable;
-import seedu.address.model.person.Person;
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Remark;
+import seedu.address.model.student.Student;
 
 /**
- * Represents a tuition class in the book
+ * Represents a tuition class in TutAssistor.
  */
 public class TuitionClass implements Nameable {
     /** Most recently viewed tuition class */
@@ -99,8 +99,8 @@ public class TuitionClass implements Nameable {
      * @param weekday
      * @return
      */
-    public boolean matchtheDay(String weekday) {
-        return weekday.equals(this.timeslot.getTime().substring(0,3).toUpperCase());
+    public boolean matchTheDay(int weekday) {
+        return weekday == timeslot.getDay().getDay();
     }
 
     @Override
@@ -113,13 +113,7 @@ public class TuitionClass implements Nameable {
      * This defines a weaker notion of equality between two tuition classes.
      */
     public boolean isSameTuition(TuitionClass otherTuition) {
-        if (otherTuition == null) {
-            return false;
-        }
-        if (otherTuition == this) {
-            return true;
-        }
-        return otherTuition.getTimeslot().equals(getTimeslot());
+        return this.equals(otherTuition);
     }
 
     //addn/John Doe p/98765432 e/johnd@example.com a/John street, block 123
@@ -130,11 +124,9 @@ public class TuitionClass implements Nameable {
         if (other == this) {
             return true;
         }
-
-        if (!(other instanceof Person)) {
+        if (!(other instanceof Student)) {
             return false;
         }
-
         TuitionClass otherClass = (TuitionClass) other;
         return otherClass.getTimeslot().equals(getTimeslot());
     }
@@ -148,7 +140,7 @@ public class TuitionClass implements Nameable {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("Class: ")
+        builder.append("Name: ")
                 .append(getName())
                 .append("; Limit: ")
                 .append(getLimit())
@@ -174,33 +166,49 @@ public class TuitionClass implements Nameable {
     /**
      * Return updated Tuition class after removing student.
      *
-     * @param person the student to be removed.
+     * @param student the student to be removed.
      * @return Updated tuition class.
      */
-    public TuitionClass removeStudent(Person person) {
-        this.studentList.getStudents().remove(person.getName().fullName);
+    public TuitionClass removeStudent(Student student) {
+        this.studentList.getStudents().remove(student.getName().fullName);
         return this;
     }
 
-    public boolean containsStudent(Person person) {
-        return this.studentList.getStudents().contains(person.getName().fullName);
+    /**
+     * Updates the name of a student in the tuition class.
+     *
+     * @param student The current student in the class.
+     * @param updatedStudent The updated student.
+     */
+    public void updateStudent(Student student, Student updatedStudent) {
+        this.studentList.changeStudentName(student.getNameString(), updatedStudent.getNameString());
     }
 
     /**
-     * Adds a new student to an existing class if the student is not already in the class.
+     * Returns true if the student is enrolled in the tuition class and false otherwise.
      *
-     * @param person student to be added
-     * @return the tuition class after modification
+     * @param student The student to be checked.
+     * @return A boolean true if the student is in the class, false otherwise.
      */
-    public TuitionClass addStudent(Person person) {
+    public boolean containsStudent(Student student) {
+        return this.studentList.getStudents().contains(student.getName().fullName);
+    }
+
+    /**
+     * Returns a tuition class after adding a new student to this class, if the student is not already in the class.
+     *
+     * @param student Student to be added.
+     * @return The tuition class after adding the student.
+     */
+    public TuitionClass addStudent(Student student) {
         ArrayList<String> nowStudents = this.studentList.getStudents();
-        String name = person.getName().fullName;
+        String name = student.getName().fullName;
         for (String s: nowStudents) {
             if (s.equals(name)) {
                 return null;
             }
         }
-        nowStudents.add(person.getName().fullName);
+        nowStudents.add(student.getName().fullName);
         return this;
     }
 
@@ -218,7 +226,7 @@ public class TuitionClass implements Nameable {
         for (String name: studentList.getStudents()) {
             studentString += name;
             if (!name.equals(lastStudent)) {
-                studentString += ", ";
+                studentString += "\n";
             }
         }
         return studentString;
@@ -239,4 +247,17 @@ public class TuitionClass implements Nameable {
     public static TuitionClass getMostRecent() {
         return mostRecent;
     }
+
+    /**
+     * Returns true if the limit, timeslot and names of two classes are identical.
+     *
+     * @param editedClass The class to compare to.
+     * @return boolean true if the limit, timeslot and names of two classes match, false otherwise.
+     */
+    public boolean sameClassDetails(TuitionClass editedClass) {
+        return editedClass.getTimeslot().equals(timeslot)
+                && editedClass.getName().equals(name)
+                && editedClass.getLimit().equals(this.getLimit());
+    }
 }
+

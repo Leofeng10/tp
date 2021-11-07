@@ -13,43 +13,43 @@ import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.exceptions.IllegalValueException;
 import seedu.address.model.AddressBook;
 import seedu.address.model.ReadOnlyAddressBook;
-import seedu.address.model.person.Person;
+import seedu.address.model.student.Student;
 import seedu.address.model.tuition.TuitionClass;
 
 /**
  * An Immutable AddressBook that is serializable to JSON format.
  */
-@JsonRootName(value = "addressbook")
+@JsonRootName(value = "tutassistor")
 class JsonSerializableAddressBook {
 
-    public static final String MESSAGE_DUPLICATE_PERSON = "Persons list contains duplicate person(s).";
+    public static final String MESSAGE_DUPLICATE_STUDENT = "Student list contains duplicate student(s).";
     public static final String MESSAGE_DUPLICATE_TUITION = "Tuition list contains duplicate tuition(s).";
     private static final Logger logger = LogsCenter.getLogger(JsonSerializableAddressBook.class);
 
-    private final List<JsonAdaptedPerson> persons = new ArrayList<>();
+    private final List<JsonAdaptedStudent> students = new ArrayList<>();
 
     private final List<JsonAdaptedTuition> tuitions = new ArrayList<>();
 
 
     /**
-     * Constructs a {@code JsonSerializableAddressBook} with the given persons.
+     * Constructs a {@code JsonSerializableAddressBook} with the given students.
      */
     @JsonCreator
-    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons,
+    public JsonSerializableAddressBook(@JsonProperty("students") List<JsonAdaptedStudent> students,
                                        @JsonProperty("tuitions") List<JsonAdaptedTuition> tuitions) {
-        this.persons.addAll(persons);
+        this.students.addAll(students);
         this.tuitions.addAll(tuitions);
     }
 
     /*
     @JsonCreator
-    public JsonSerializableAddressBook(@JsonProperty("persons") List<JsonAdaptedPerson> persons) {
-        this.persons.addAll(persons);
+    public JsonSerializableAddressBook(@JsonProperty("students") List<JsonAdaptedStudent> students) {
+        this.students.addAll(students);
     }
 
     @JsonCreator
-    public JsonSerializableAddressBook(@JsonProperty("tuition") List<JsonAdaptedPerson> persons) {
-        this.persons.addAll(persons);
+    public JsonSerializableAddressBook(@JsonProperty("tuition") List<JsonAdaptedStudent> students) {
+        this.students.addAll(students);
     }
     */
 
@@ -59,8 +59,8 @@ class JsonSerializableAddressBook {
      * @param source future changes to this will not affect the created {@code JsonSerializableAddressBook}.
      */
     public JsonSerializableAddressBook(ReadOnlyAddressBook source) {
-        persons.addAll(source.getPersonList().stream()
-                .map(JsonAdaptedPerson::new).collect(Collectors.toList()));
+        students.addAll(source.getStudentList().stream()
+                .map(JsonAdaptedStudent::new).collect(Collectors.toList()));
         tuitions.addAll(source.getTuitionList().stream()
                 .map(JsonAdaptedTuition::new).collect(Collectors.toList()));
     }
@@ -72,13 +72,13 @@ class JsonSerializableAddressBook {
      */
     public AddressBook toModelType() throws IllegalValueException {
         AddressBook addressBook = new AddressBook();
-        for (JsonAdaptedPerson jsonAdaptedPerson : persons) {
-            Person person = jsonAdaptedPerson.toModelType();
-            if (addressBook.hasPerson(person)) {
-                throw new IllegalValueException(MESSAGE_DUPLICATE_PERSON);
+        for (JsonAdaptedStudent jsonAdaptedStudent : students) {
+            Student student = jsonAdaptedStudent.toModelType();
+            if (addressBook.hasStudent(student)) {
+                throw new IllegalValueException(MESSAGE_DUPLICATE_STUDENT);
             }
-            logger.info("JSAPerson: " + person.toString());
-            addressBook.addPerson(person);
+            logger.info("JSAStudent: " + student.toString());
+            addressBook.addStudent(student);
         }
 
         for (JsonAdaptedTuition jsonAdaptedTuition: tuitions) {

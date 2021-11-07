@@ -2,7 +2,7 @@ package seedu.address.testutil;
 
 import java.util.ArrayList;
 
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Remark;
 import seedu.address.model.tuition.ClassLimit;
 import seedu.address.model.tuition.ClassName;
 import seedu.address.model.tuition.StudentList;
@@ -29,7 +29,7 @@ public class TuitionClassBuilder {
     public TuitionClassBuilder() {
         name = new ClassName(DEFAULT_NAME);
         limit = new ClassLimit(DEFAULT_LIMIT);
-        timeslot = new Timeslot(DEFAULT_TIMESLOT);
+        timeslot = Timeslot.parseString(DEFAULT_TIMESLOT);
         studentList = new StudentList(new ArrayList<>());
         remark = new Remark(DEFAULT_REMARK);
         id = DEFAULT_ID;
@@ -42,7 +42,7 @@ public class TuitionClassBuilder {
         name = classToCopy.getName();
         limit = classToCopy.getLimit();
         timeslot = classToCopy.getTimeslot();
-        studentList = classToCopy.getStudentList();
+        studentList = getNewStudentList(classToCopy.getStudentList());
         remark = classToCopy.getRemark();
         id = classToCopy.getId();
     }
@@ -67,7 +67,7 @@ public class TuitionClassBuilder {
      * Sets the {@code Timeslot} of the {@code TuitionClass} that we are building.
      */
     public TuitionClassBuilder withTimeslot(String timeslot) {
-        this.timeslot = new Timeslot(timeslot);
+        this.timeslot = Timeslot.parseString(timeslot);
         return this;
     }
     /**
@@ -95,5 +95,11 @@ public class TuitionClassBuilder {
 
     public TuitionClass build() {
         return new TuitionClass(name, limit, timeslot, studentList, remark, id);
+    }
+
+    private StudentList getNewStudentList(StudentList studentListToCopy) {
+        ArrayList<String> newList = new ArrayList<>();
+        newList.addAll(studentListToCopy.getStudents());
+        return new StudentList(newList);
     }
 }

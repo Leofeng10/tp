@@ -7,19 +7,32 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.SortCommandParser;
 import seedu.address.model.Model;
 
+/**
+ * Sorts the tuition class list.
+ */
 public class SortCommand extends Command {
     public static final String COMMAND_WORD = "sort";
+    public static final String SHORTCUT = "s";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Sort the tuition class list.\n"
-            + "Parameters: [" + PREFIX_SORT_ORDER + "ORDER_TO_SORT] \n"
-            + "ORDER_TO_SORT includes 'o/time', 'o/asc' (for ascending), and 'o/desc' (for descending)\n"
+            + "Parameters: [" + PREFIX_SORT_ORDER + "ORDER] \n"
+            + "ORDER includes 'o/time', 'o/asc' (for ascending alphabetical order), "
+            + "and 'o/desc' (for descending alphabetical order)\n"
             + "Example1: " + COMMAND_WORD + " " + PREFIX_SORT_ORDER + "asc\n"
             + "Example2: " + COMMAND_WORD;
-    private static final String MESSAGE_SORTED = "The tuition class list is now sorted by %1$s order";
+    public static final String MESSAGE_SORTED = "The tuition class list is now sorted by %1$s order";
     private SortCommandParser.Order order;
     public SortCommand(SortCommandParser.Order order) {
         this.order = order;
     }
+
+    /**
+     * Sorts the tuition class list by time or alphabetical order.
+     * @param model {@code Model} which the command should operate on.
+     * @return a CommandResult of the sort command.
+     * @throws CommandException default path throws a CommandException if
+     * the sorting order is not defined by the software
+     */
     @Override
     public CommandResult execute(Model model) throws CommandException {
         SortCommandParser.Order resultOrder;
@@ -44,7 +57,7 @@ public class SortCommand extends Command {
 
     private void sort(SortCommandParser.Order order, Model model) {
         model.sort(order);
-        model.updateFilteredPersonList(Model.PREDICATE_SHOW_ALL_PERSONS);
+        model.updateFilteredStudentList(Model.PREDICATE_SHOW_ALL_STUDENTS);
     }
 
     private String getSuccessMessage(String order) {
@@ -58,5 +71,19 @@ public class SortCommand extends Command {
         default:
             return order;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        SortCommand that = (SortCommand) o;
+
+        return order == that.order;
     }
 }

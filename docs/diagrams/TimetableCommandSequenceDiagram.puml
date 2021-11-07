@@ -1,0 +1,63 @@
+@startuml
+!include style.puml
+skinparam BoxPadding 30
+
+title TimetableCommand
+
+box Ui UI_COLOR_T1
+participant ":UI" as ui UI_COLOR
+participant ":TimetableInfoPage" as TimetableInfoPage UI_COLOR_T2
+end box
+
+box Model MODEL_COLOR_T1
+participant ":Timetable" as Timetable MODEL_COLOR
+end box
+
+[-[USER_COLOR]> ui : executeUiAction()
+activate ui UI_COLOR
+
+ui -[UI_COLOR]> ui : showTimetable()
+activate ui UI_COLOR_T4
+create TimetableInfoPage
+ui -[UI_COLOR_T4]> TimetableInfoPage
+activate TimetableInfoPage UI_COLOR_T2
+
+create Timetable
+TimetableInfoPage -[UI_COLOR_T2]> Timetable
+activate Timetable MODEL_COLOR
+Timetable --> TimetableInfoPage
+deactivate Timetable
+
+TimetableInfoPage -[UI_COLOR_T2]> Timetable: showTimetable()
+activate Timetable MODEL_COLOR
+Timetable -> Timetable: parseTime()
+Timetable -> TimetableInfoPage: setTimetable()
+activate TimetableInfoPage UI_COLOR_T3
+TimetableInfoPage -[UI_COLOR_T3]-> Timetable
+deactivate TimetableInfoPage
+
+Timetable -> Timetable: insertSlot()
+activate Timetable MODEL_COLOR_T4
+Timetable -> TimetableInfoPage : addLesson()
+activate TimetableInfoPage UI_COLOR_T3
+TimetableInfoPage -[UI_COLOR_T3]-> Timetable
+deactivate TimetableInfoPage
+
+Timetable --> Timetable
+deactivate Timetable
+Timetable --> TimetableInfoPage
+deactivate Timetable
+Timetable -[hidden]-> TimetableInfoPage
+destroy Timetable
+
+TimetableInfoPage -[UI_COLOR_T2]-> ui
+deactivate TimetableInfoPage
+TimetableInfoPage -[hidden]-> ui
+destroy TimetableInfoPage
+ui -[UI_COLOR_T4]-> ui
+deactivate ui
+
+[<-[UI_COLOR]-ui
+deactivate ui
+
+@enduml

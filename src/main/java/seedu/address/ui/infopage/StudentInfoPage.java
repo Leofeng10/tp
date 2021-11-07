@@ -8,10 +8,10 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import seedu.address.commons.core.LogsCenter;
-import seedu.address.model.person.Person;
+import seedu.address.model.student.Student;
 
 /**
- * TODO
+ * A container to contain student details.
  */
 public class StudentInfoPage extends InfoPage {
 
@@ -27,7 +27,7 @@ public class StudentInfoPage extends InfoPage {
      * @see <a href="https://github.com/se-edu/addressbook-level4/issues/336">The issue on AddressBook level 4</a>
      */
 
-    private final Person student;
+    private final Student student;
 
     @FXML
     private VBox studentPagePane;
@@ -48,14 +48,14 @@ public class StudentInfoPage extends InfoPage {
      * Constructor for a StudentInfoPage
      * @param student Student to display information of.
      */
-    public StudentInfoPage(Person student) {
+    public StudentInfoPage(Student student) {
         super(FXML);
         logger.info("StudentInfoPage " + student);
 
         this.student = student;
         this.name.setText(student.getName().fullName);
         this.phone.setText(student.getPhone().value);
-        this.remark.setText("Remark: " + student.getRemark().value);
+        this.remark.setText(student.getRemark().value);
         this.address.setText(student.getAddress().value);
         this.email.setText(student.getEmail().value);
         student.getTags().stream()

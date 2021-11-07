@@ -2,20 +2,29 @@ package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
+import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.Address;
-import seedu.address.model.person.Email;
-import seedu.address.model.person.Name;
-import seedu.address.model.person.Phone;
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Address;
+import seedu.address.model.student.Email;
+import seedu.address.model.student.Name;
+import seedu.address.model.student.Phone;
+import seedu.address.model.student.Remark;
 import seedu.address.model.tag.Tag;
 import seedu.address.model.tuition.ClassLimit;
 import seedu.address.model.tuition.ClassName;
@@ -146,11 +155,18 @@ public class ParserUtil {
      *
      *
      */
-    public static ClassLimit parseLimit(String limit) {
+    public static ClassLimit parseLimit(String limit) throws ParseException {
         requireNonNull(limit);
         String trimmedLimit = limit.trim();
-
-        return new ClassLimit(Integer.valueOf(trimmedLimit));
+        try {
+            int myLimit = Integer.parseInt(trimmedLimit);
+            if (!ClassLimit.isValidLimit(myLimit)) {
+                throw new ParseException(ClassLimit.MESSAGE_CONSTRAINTS);
+            }
+            return new ClassLimit(myLimit);
+        } catch (NumberFormatException e) {
+            throw new ParseException(ClassLimit.MESSAGE_CONSTRAINTS);
+        }
     }
 
     /**
@@ -186,20 +202,6 @@ public class ParserUtil {
         }
         return new ClassName(trimmedName);
     }
-
-
-    /**
-     * Parses a {@code String timeslot} into a {@code Timeslot}.
-     * Leading and trailing whitespaces will be trimmed.
-     *
-     */
-    public static Timeslot parseTimeslot(String timeslot) {
-        requireNonNull(timeslot);
-        String trimmedName = timeslot.trim();
-
-        return new Timeslot(trimmedName);
-    }
-
     /**
      * Parses a {@code List students} into a {@code Student}.
      * @param students a list of students, each of which is a string
@@ -221,11 +223,11 @@ public class ParserUtil {
     }
 
     /**
-     * Returns list of student indexes.
+     * Parses a {@code List studentIndexes} into a List of indexes.
      *
-     * @param studentIndexes list of indexes, each representing a student.
-     * @return List of student indexes.
-     * @throws ParseException If index is invalid.
+     * @param studentIndexes List of indexes, each representing a student.
+     * @return List of student indexes sorted in descending order.
+     * @throws ParseException If any index is invalid.
      */
     public static List<Index> parseStudentIndexes(List studentIndexes) throws ParseException {
         List<Index> args = new ArrayList<Index>();
@@ -236,7 +238,49 @@ public class ParserUtil {
                 args.add(i);
             }
         }
-        //throw  new ParseException(studentIndexes.stream().reduce("", (s, x) -> s+x));
+        Collections.sort(args, (index1, index2) -> {
+            if (index1.getOneBased() < index2.getOneBased()) {
+                return 1;
+            } else if (index1.getOneBased() > index2.getOneBased()) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
         return args;
     }
+
+    /**
+     * Parses a {@code String timeslot} into a {@code Timeslot}.
+     * Uses EEE HH:mm-HH:mm format.
+     *
+     * @param timeslot The String that represents the day and timings.
+     * @return The timeslot.
+     * @throws ParseException If there are parsing errors or the timings are invalid.
+     */
+    public static Timeslot parseTimeslot(String timeslot) throws ParseException {
+        requireNonNull(timeslot);
+        //Splits day from time
+        String[] arr = timeslot.trim().split(" ", 2);
+        String[] times = arr.length == 2 ? arr[1].split("-", 2) : null;
+
+        if (arr.length < 2 || times == null || times.length < 2) {
+            throw new ParseException(Messages.MESSAGE_TIMESLOT_FORMAT);
+        }
+        DateFormat dayFormat = new SimpleDateFormat("EEE");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
+        try {
+            Date day = dayFormat.parse(arr[0]);
+            LocalTime start = LocalTime.parse(times[0], timeFormat);
+            LocalTime end = LocalTime.parse(times[1], timeFormat);
+
+            if (!start.isBefore(end)) {
+                throw new ParseException(Messages.MESSAGE_TIMESLOT_FORMAT);
+            }
+            return new Timeslot(day, start, end);
+        } catch (DateTimeException | java.text.ParseException de) {
+            throw new ParseException(Messages.MESSAGE_TIMESLOT_FORMAT);
+        }
+    }
 }
+

@@ -3,7 +3,7 @@ package seedu.address.model.tuition;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Represents the name of the tuition class
+ * Represents the name of the tuition class.
  */
 public class ClassName {
 
@@ -12,7 +12,7 @@ public class ClassName {
     /**
      * Constructor for Class Name.
      *
-     * @param name
+     * @param name The name of the class.
      */
     public ClassName(String name) {
         requireNonNull(name);
@@ -26,9 +26,13 @@ public class ClassName {
 
     @Override
     public boolean equals(Object other) {
-        return other == this // short circuit if same object
-                || (other instanceof ClassLimit // instanceof handles nulls
-                && name == ((ClassName) other).name); // state check
+        if (other == this) {
+            return true;
+        }
+        if (other instanceof ClassName) {
+            return name.equals(((ClassName) other).name);
+        }
+        return false;
     }
 
     public String getName() {

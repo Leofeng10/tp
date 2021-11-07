@@ -15,6 +15,7 @@ import seedu.address.model.tuition.TuitionClass;
  */
 public class ViewClassCommand extends Command {
     public static final String COMMAND_WORD = "class";
+    public static final String SHORTCUT = "vc";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Shows full information on a class of "
             + "a specified index number.\n"

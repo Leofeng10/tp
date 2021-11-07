@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import seedu.address.commons.exceptions.IllegalValueException;
-import seedu.address.model.person.Email;
-import seedu.address.model.person.Name;
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Email;
+import seedu.address.model.student.Name;
+import seedu.address.model.student.Remark;
 import seedu.address.model.tuition.ClassLimit;
 import seedu.address.model.tuition.ClassName;
 import seedu.address.model.tuition.StudentList;
@@ -19,7 +19,6 @@ import seedu.address.model.tuition.TuitionClass;
  * Jackson-friendly version of {@link TuitionClass}.
  */
 class JsonAdaptedTuition {
-
     public static final String MISSING_FIELD_MESSAGE_FORMAT = "Tuition class' %s field is missing!";
 
     private final String name;
@@ -30,12 +29,10 @@ class JsonAdaptedTuition {
     private final String remark;
 
     private final int id;
-    private final ArrayList<String> student = new ArrayList<>();
-
-
+    //private final ArrayList<String> student = new ArrayList<>();
 
     /**
-     * Constructs a {@code JsonAdaptedPerson} with the given person details.
+     * Constructs a {@code JsonAdaptedStudent} with the given student details.
      */
     @JsonCreator
     public JsonAdaptedTuition(@JsonProperty("name") String name, @JsonProperty("limit") int limit,
@@ -51,8 +48,6 @@ class JsonAdaptedTuition {
         if (student != null) {
             this.students.addAll(student);
         }
-
-
     }
 
     /**
@@ -65,13 +60,12 @@ class JsonAdaptedTuition {
         students.addAll(source.getStudentList().getStudents());
         remark = source.getRemark().value;
         id = source.getId();
-
     }
 
     /**
      * Converts this Jackson-friendly adapted tuition object into the model's {@code TuitionClass} object.
      *
-     * @throws IllegalValueException if there were any data constraints violated in the adapted person.
+     * @throws IllegalValueException if there were any data constraints violated in the adapted student.
      */
     public TuitionClass toModelType() throws IllegalValueException {
 
@@ -90,15 +84,13 @@ class JsonAdaptedTuition {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Email.class.getSimpleName()));
         }
 
-        if (!new Timeslot(timeslot).isFormatCorrect()) {
+        final Timeslot modelTimeslot = Timeslot.parseString(timeslot);
+
+        if (modelTimeslot == null) {
             throw new IllegalValueException(Timeslot.TIME_FORMAT_INCORRECT);
         }
 
-        final Timeslot modelTimeslot = new Timeslot(timeslot);
-
         final StudentList modelStudent = new StudentList(students);
-
-
 
         if (remark == null) {
             throw new IllegalValueException(String.format(MISSING_FIELD_MESSAGE_FORMAT, Remark.class.getSimpleName()));

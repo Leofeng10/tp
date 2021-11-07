@@ -1,43 +1,35 @@
 package seedu.address.logic.commands;
 
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
-import static seedu.address.logic.parser.CliSyntax.PREFIX_REMARK;
 import static seedu.address.model.Model.PREDICATE_SHOW_ALL_TUITIONS;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.DialogPane;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.Messages;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Remark;
 import seedu.address.model.tuition.TuitionClass;
-import seedu.address.ui.RemarkEditor;
 import seedu.address.ui.UiManager;
 
+/**
+ * Changes the remark of an existing tuition class in the TutAssistor.
+ */
 public class RemarkClassCommand extends Command {
 
     public static final String COMMAND_WORD = "remarkclass";
+    public static final String SHORTCUT = "rec";
+
     public static final String MESSAGE_UPDATE_REMARK_SUCCESS = "Remark updated for Tuition Class: %1$s";
     public static final String MESSAGE_DELETE_REMARK_SUCCESS = "Removed remark from Tuition Class: %1$s";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Edits the remark of the tuition class identified "
-            + "by the index number used in the last tuition classes listing. "
-            + "Existing remark will be overwritten by the input.\n"
-            + "Parameters: INDEX (must be a positive integer) "
-            + PREFIX_REMARK + "[REMARK]\n"
-            + "Example: " + COMMAND_WORD + " 1 "
-            + PREFIX_REMARK + "physics homework: read chapter 3 pg 49-53.";
+            + "by the index number used in the last tuition classes listing.\n"
+            + "Parameters: CLASS_INDEX (must be a positive integer)\n"
+            + "Example: " + COMMAND_WORD + " 1 ";
 
     private static final Logger logger = LogsCenter.getLogger(RemarkClassCommand.class);
 
@@ -54,6 +46,7 @@ public class RemarkClassCommand extends Command {
 
     @Override
     public CommandResult execute(Model model) throws CommandException {
+        model.updateFilteredTuitionList(PREDICATE_SHOW_ALL_TUITIONS);
         List<TuitionClass> lastShownList = model.getFilteredTuitionList();
 
         if (index.getZeroBased() >= lastShownList.size()) {
@@ -67,9 +60,9 @@ public class RemarkClassCommand extends Command {
         Remark newRemark = UiManager.showRemarkEditor(name, remarkToEdit);
 
         TuitionClass editedClass = new TuitionClass(classToEdit.getName(), classToEdit.getLimit(),
-                classToEdit.getTimeslot(), classToEdit.getStudentList(), newRemark);
+                classToEdit.getTimeslot(), classToEdit.getStudentList(), newRemark, classToEdit.getId());
 
-        logger.info("Remark Editor closed.");
+        logger.info("Remarks updated from: [" + remarkToEdit + "] to [" + newRemark.toString() + "]");
 
         model.setTuition(classToEdit, editedClass);
         model.updateFilteredTuitionList(PREDICATE_SHOW_ALL_TUITIONS);
@@ -77,6 +70,11 @@ public class RemarkClassCommand extends Command {
         return new CommandResult(generateSuccessMessage(editedClass));
     }
 
+    /**
+     * Generates the message for the command execution outcome.
+     * @param classToEdit The tuition class with the new remark.
+     * @return A message that informs the user whether the remark is updated successfully or deleted.
+     */
     private String generateSuccessMessage(TuitionClass classToEdit) {
         String remark = String.valueOf(classToEdit.getRemark());
         String message = !remark.isEmpty() ? MESSAGE_UPDATE_REMARK_SUCCESS : MESSAGE_DELETE_REMARK_SUCCESS;

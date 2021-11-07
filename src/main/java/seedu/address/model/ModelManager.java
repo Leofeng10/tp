@@ -4,10 +4,6 @@ import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.nio.file.Path;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
@@ -17,7 +13,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.parser.SortCommandParser;
-import seedu.address.model.person.Person;
+import seedu.address.model.student.Student;
 import seedu.address.model.tuition.TuitionClass;
 
 /**
@@ -28,8 +24,8 @@ public class ModelManager implements Model {
 
     private final AddressBook addressBook;
     private final UserPrefs userPrefs;
-    private FilteredList<Person> filteredPersons;
-    private final FilteredList<TuitionClass> filteredTuition;
+    private FilteredList<Student> filteredStudents;
+    private FilteredList<TuitionClass> filteredTuition;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -42,7 +38,7 @@ public class ModelManager implements Model {
 
         this.addressBook = new AddressBook(addressBook);
         this.userPrefs = new UserPrefs(userPrefs);
-        filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
+        filteredStudents = new FilteredList<>(this.addressBook.getStudentList());
         filteredTuition = new FilteredList<>(this.addressBook.getTuitionList());
 
     }
@@ -99,45 +95,40 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public boolean hasPerson(Person person) {
-        requireNonNull(person);
-        return addressBook.hasPerson(person);
+    public boolean hasStudent(Student student) {
+        requireNonNull(student);
+        return addressBook.hasStudent(student);
     }
 
     @Override
-    public void deletePerson(Person target) {
-        addressBook.removePerson(target);
-        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+    public void deleteStudent(Student target) {
+        addressBook.removeStudent(target);
+        updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
     }
 
     @Override
-    public void addPerson(Person person) {
-        addressBook.addPerson(person);
-        updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+    public void addStudent(Student student) {
+        addressBook.addStudent(student);
+        updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
     }
 
     @Override
-    public void setPerson(Person target, Person editedPerson) {
-        requireAllNonNull(target, editedPerson);
-        addressBook.setPerson(target, editedPerson);
+    public void setStudent(Student target, Student editedStudent) {
+        requireAllNonNull(target, editedStudent);
+        addressBook.setStudent(target, editedStudent);
     }
 
     @Override
-    public Person getStudent(Index index) {
+    public Student getStudent(Index index) {
         requireNonNull(index);
-        return addressBook.getPerson(index);
+        return addressBook.getStudent(index);
     }
 
     @Override
-    public Person getSameNamePerson(Person otherPerson) {
-        return this.addressBook.getSameNamePerson(otherPerson);
+    public Student getSameNameStudent(Student otherStudent) {
+        return this.addressBook.getSameNameStudent(otherStudent);
     }
 
-    @Override
-    public TuitionClass getClassById(Integer id) {
-        requireAllNonNull(id);
-        return addressBook.getClassById(id);
-    }
 
     @Override
     public void sort(SortCommandParser.Order order) {
@@ -145,22 +136,22 @@ public class ModelManager implements Model {
         addressBook.sort(order);
     }
 
-    //=========== Filtered Person List Accessors =============================================================
+    //=========== Filtered Student List Accessors =============================================================
 
     /**
-     * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
+     * Returns an unmodifiable view of the list of {@code Student} backed by the internal list of
      * {@code versionedAddressBook}
      */
     @Override
-    public ObservableList<Person> getFilteredPersonList() {
-        return filteredPersons;
+    public ObservableList<Student> getFilteredStudentList() {
+        return filteredStudents;
     }
 
     @Override
-    public void updateFilteredPersonList(Predicate<Person> predicate) {
+    public void updateFilteredStudentList(Predicate<Student> predicate) {
         requireNonNull(predicate);
-        filteredPersons.setPredicate(predicate);
-        logger.info("filter" + filteredPersons.toString());
+        filteredStudents.setPredicate(predicate);
+        logger.info("filter" + filteredStudents.toString());
     }
 
     @Override
@@ -179,14 +170,14 @@ public class ModelManager implements Model {
         ModelManager other = (ModelManager) obj;
         return addressBook.equals(other.addressBook)
                 && userPrefs.equals(other.userPrefs)
-                && filteredPersons.equals(other.filteredPersons);
+                && filteredStudents.equals(other.filteredStudents);
     }
 
 
     //=========== Filtered Tuition List Accessors =============================================================
 
     /**
-     * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
+     * Returns an unmodifiable view of the list of {@code Student} backed by the internal list of
      * {@code versionedAddressBook}
      */
     @Override
@@ -198,34 +189,13 @@ public class ModelManager implements Model {
     public void updateFilteredTuitionList(Predicate<TuitionClass> predicate) {
         requireNonNull(predicate);
         filteredTuition.setPredicate(predicate);
-        logger.info(filteredPersons.toString());
+        logger.info(filteredStudents.toString());
     }
 
     @Override
     public ObservableList<TuitionClass> getTodayTuitionList() {
         return addressBook.getTodayTuitionList();
     }
-
-    /*
-
-    @Override
-    public boolean equals(Object obj) {
-    // short circuit if same object
-        if (obj == this) {
-            return true;
-        }
-        // instanceof handles nulls
-        if (!(obj instanceof ModelManager)) {
-            return false;
-        }
-
-       // state check
-       ModelManager other = (ModelManager) obj;
-       return addressBook.equals(other.addressBook)
-                && userPrefs.equals(other.userPrefs)
-                && filteredPersons.equals(other.filteredPersons);
-    }
-    */
 
     @Override
     public boolean hasTuition(TuitionClass tuitionClass) {
@@ -246,10 +216,16 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public TuitionClass addToClass(TuitionClass tuitionClass, Person person) {
+    public TuitionClass getClassById(Integer id) {
+        requireAllNonNull(id);
+        return addressBook.getClassById(id);
+    }
+
+    @Override
+    public TuitionClass addToClass(TuitionClass tuitionClass, Student student) {
         requireNonNull(tuitionClass);
-        requireNonNull(person);
-        TuitionClass c = addressBook.addToClass(tuitionClass, person);
+        requireNonNull(student);
+        TuitionClass c = addressBook.addToClass(tuitionClass, student);
         updateFilteredTuitionList(PREDICATE_SHOW_ALL_TUITIONS);
         return c;
     }
@@ -264,6 +240,6 @@ public class ModelManager implements Model {
     public void deleteTuition(TuitionClass target) {
         addressBook.removeTuition(target);
         this.updateFilteredTuitionList(PREDICATE_SHOW_ALL_TUITIONS);
-        this.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
+        this.updateFilteredStudentList(PREDICATE_SHOW_ALL_STUDENTS);
     }
 }

@@ -9,6 +9,9 @@ import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.DeleteClassCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 
+/**
+ * Parses input arguments and creates a new DeleteClassCommand object.
+ */
 public class DeleteClassCommandParser implements Parser<DeleteClassCommand> {
     /**
      * Parses {@code userInput} into a command and returns it.

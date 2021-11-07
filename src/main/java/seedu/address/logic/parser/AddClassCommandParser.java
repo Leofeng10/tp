@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.AddClassCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.person.Remark;
+import seedu.address.model.student.Remark;
 import seedu.address.model.tuition.ClassLimit;
 import seedu.address.model.tuition.ClassName;
 import seedu.address.model.tuition.StudentList;
@@ -32,8 +32,9 @@ public class AddClassCommandParser implements Parser<AddClassCommand> {
     public AddClassCommand parse(String args) throws ParseException {
         boolean hasStudents = false;
         ArgumentMultimap argMultimap =
-                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_LIMIT,
-                        PREFIX_TIMESLOT, PREFIX_STUDENT, PREFIX_REMARK);
+                ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_LIMIT, PREFIX_TIMESLOT,
+                        PREFIX_STUDENT, PREFIX_REMARK);
+
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_LIMIT, PREFIX_TIMESLOT)
                 || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT,
@@ -42,17 +43,22 @@ public class AddClassCommandParser implements Parser<AddClassCommand> {
         if (arePrefixesPresent(argMultimap, PREFIX_STUDENT)) {
             hasStudents = true;
         }
-        ClassName name = ParserUtil.parseClassName(argMultimap.getValue(PREFIX_NAME).get());
-        ClassLimit limit = ParserUtil.parseLimit(argMultimap.getValue(PREFIX_LIMIT).get());
-        Timeslot timeslot = ParserUtil.parseTimeslot(argMultimap.getValue(PREFIX_TIMESLOT).get());
-        StudentList student = hasStudents ? ParserUtil.parseStudent(argMultimap.getAllValues(PREFIX_STUDENT))
-                : new StudentList(new ArrayList<>());
-        Remark remark = ParserUtil.parseRemark(argMultimap.getOptionalValue(PREFIX_REMARK).get());
-        TuitionClass tuitionClass = new TuitionClass(name, limit, timeslot, student, remark);
+        try {
+            ClassName name = ParserUtil.parseClassName(argMultimap.getValue(PREFIX_NAME).get());
+            ClassLimit limit = ParserUtil.parseLimit(argMultimap.getValue(PREFIX_LIMIT).get());
+            Timeslot timeslot = ParserUtil.parseTimeslot(argMultimap.getValue(PREFIX_TIMESLOT).get());
+            StudentList student = hasStudents ? ParserUtil.parseStudent(argMultimap.getAllValues(PREFIX_STUDENT))
+                    : new StudentList(new ArrayList<>());
+            Remark remark = ParserUtil.parseRemark(argMultimap.getOptionalValue(PREFIX_REMARK).get());
+            TuitionClass tuitionClass = new TuitionClass(name, limit, timeslot, student, remark);
+            logger.info("AddClassCommandParser " + tuitionClass);
+            return new AddClassCommand(tuitionClass);
 
-        logger.info("AddClassCommandParser " + tuitionClass);
-
-        return new AddClassCommand(tuitionClass);
+        } catch (ParseException pe) {
+            String displayMessage = String.format(MESSAGE_INVALID_COMMAND_FORMAT, pe.getMessage())
+                    + "\n" + AddClassCommand.MESSAGE_USAGE;
+            throw new ParseException(displayMessage);
+        }
     }
 
     /**

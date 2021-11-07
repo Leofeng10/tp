@@ -1,6 +1,9 @@
 [![CI Status](https://github.com/ay2122s1-cs2103t-t12-4/tp/workflows/Java%20CI/badge.svg)](https://github.com/AY2122S1-CS2103T-T12-4/tp/actions)
 
-# TutAssistor
+<p align="center">
+  <img src="docs/images/ta_logo_cropped_white_bg.png">
+  <p><h1>Welcome to TutAssistor!</h1></p>
+</p>
 
 ![Ui](docs/images/Ui.png)
 
